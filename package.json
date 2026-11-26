@@ -1,19 +1,20 @@
 {
-  "name": "repository-template",
+  "name": "crons-client-worker",
   "version": "1.0.0",
-  "description": "Cloudflare Workers repository template",
+  "private": true,
+  "description": "Internal cron worker: homework change detection (ÉcoleDirecte) and D1 housekeeping for Lumaris",
   "packageManager": "npm@11.16.0",
   "engines": {
     "node": ">=20"
   },
+  "type": "module",
   "main": "src/index.js",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "test": "echo \"Tests not configured yet\" && exit 0"
+    "check": "node --check src/index.js"
   },
   "devDependencies": {
     "wrangler": "^4.166.0"
-  },
-  "dependencies": {}
+  }
 }

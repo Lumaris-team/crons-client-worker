@@ -1,16 +1,47 @@
 {
   // Principal informations
-  "name": "worker_name",
+  "name": "crons-client-worker",
   "main": "src/index.js",
   "compatibility_date": "2026-07-19",
-  "workers_dev": true,
+  "workers_dev": false,
   "compatibility_flags": ["nodejs_compat"],
 
-  // Static site
-  "assets": {
-    "directory": "./src/frontend",
-    "binding": "ASSETS"
+  // Internal-only worker: reached exclusively through service bindings
+  // (ED_CLIENT, UPDATER) and Cloudflare Cron Triggers. No public URL,
+  // no static assets.
+
+  // Cron Triggers
+  //   "0 * * * *"  → hourly: homework diff + D1 purge
+  //   "0 2 * * *"  → daily 02:00: trigger update-client-account via binding
+  "triggers": {
+    "crons": ["0 * * * *", "0 2 * * *"]
   },
+
+  // D1 databases (IDs resolved by update-client-account — see CONFIGURATION)
+  "d1_databases": [
+    {
+      "binding": "TIMETABLE",
+      "database_name": "timetable",
+      "database_id": "__D1_ID_TIMETABLE__"
+    },
+    {
+      "binding": "SCHOOL_DATA",
+      "database_name": "school_data",
+      "database_id": "__D1_ID_SCHOOL_DATA__"
+    }
+  ],
+
+  // Internal service bindings — no public URL involved
+  "services": [
+    {
+      "binding": "ED_CLIENT",
+      "service": "ed-client-worker"
+    },
+    {
+      "binding": "UPDATER",
+      "service": "update-client-account"
+    }
+  ],
 
   // Observability
   "observability": {
@@ -20,10 +51,6 @@
       "enabled": true,
       "head_sampling_rate": 1,
       "invocation_logs": true
-    },
-    "traces": {
-      "enabled": true,
-      "head_sampling_rate": 1
     }
   }
 }
