@@ -12,7 +12,8 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "check": "node --check src/index.js"
+    "check": "node --check src/index.js",
+    "predeploy": "node scripts/predeploy-d1.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.166.0"

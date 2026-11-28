@@ -22,12 +22,12 @@
     {
       "binding": "TIMETABLE",
       "database_name": "timetable",
-      "database_id": "__D1_ID_TIMETABLE__"
+      "database_id": "e90910eb-6dd0-4e5e-a6d9-88cae3759dde"
     },
     {
       "binding": "SCHOOL_DATA",
       "database_name": "school_data",
-      "database_id": "__D1_ID_SCHOOL_DATA__"
+      "database_id": "6261427c-8962-4c0c-91e0-cb667e8f5f13"
     }
   ],
 

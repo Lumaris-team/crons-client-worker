@@ -1,5 +1,6 @@
 import { checkHomeworks } from "./jobs/homeworks.js";
 import { purgeOldTasks } from "./jobs/purge.js";
+import { resetRecurringTasks } from "./jobs/recurrence.js";
 
 // crons-client-worker — internal cron worker for Lumaris.
 //
@@ -30,16 +31,27 @@ async function runHourlyJobs(env) {
 }
 
 async function runDailyJobs(env) {
+  // Recurring reset must run BEFORE the updater trigger so a redeploy of
+  // this very worker can't kill it mid-flight.
+  let recurrence = null;
+  try {
+    recurrence = await resetRecurringTasks(env);
+  } catch (e) {
+    recurrence = { error: e?.message || "recurrence reset failed" };
+  }
+
   // Fire-and-forget trigger: the updater answers 202 immediately and keeps
   // deploying in the background via ctx.waitUntil on its side.
+  let updater;
   try {
     const res = await env.UPDATER.fetch("https://updater.internal/api/internal/update-workers", {
       method: "POST",
     });
-    return { updater: { status: res.status } };
+    updater = { status: res.status };
   } catch (e) {
-    return { updater: { error: e?.message || "updater trigger failed" } };
+    updater = { error: e?.message || "updater trigger failed" };
   }
+  return { recurrence, updater };
 }
 
 export default {
